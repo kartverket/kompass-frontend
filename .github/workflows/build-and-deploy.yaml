@@ -1,0 +1,116 @@
+name: Build and Deploy Application
+
+on:
+  push:
+    branches: [main]
+    # Publish semver tags as releases.
+    tags: ["v*.*.*"]
+    paths-ignore:
+      - doc/**
+      - samples/**
+      - README.md
+      - CONTRIBUTING.md
+  pull_request:
+    branches: [main]
+    # Publish semver tags as releases.
+    tags: ["v*.*.*"]
+    paths-ignore:
+      - doc/**
+      - samples/**
+      - README.md
+      - CONTRIBUTING.md
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build container image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: type=sha,format=long
+
+      - name: Build and push Docker image
+        id: build-docker
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: ${{ !github.event.pull_request.draft }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+    outputs:
+      image_digest: ${{ steps.build-docker.outputs.digest }}
+
+  pharos-scan:
+    if: (!github.event.pull_request.draft)
+    name: Run Pharos Security Scan
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      actions: read
+      security-events: write
+    steps:
+      - name: Run Pharos
+        uses: kartverket/pharos@v0.1.1
+        with:
+          image_url: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{needs.build.outputs.image_digest}}"
+
+  nacho-skip:
+    name: Run Nacho-Skip for Provenance
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      packages: write
+      contents: read
+    steps:
+      - name: "Run Nacho SKIP"
+        uses: kartverket/nacho-skip@v0.1.0
+        with:
+          service_account: kompass-deploy@skip-dev-7d22.iam.gserviceaccount.com
+          auth_project_number: 214581028419
+          image_name: ${{ env.IMAGE_NAME }}
+          image_digest: ${{ needs.build.outputs.image_digest }}
+
+  deploy-argo:
+    if: github.event_name == 'push' || github.ref == 'refs/heads/main'
+    needs: [build, generate]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout apps repo
+        uses: actions/checkout@v3
+        with:
+          repository: kartverket/kompass-apps
+          token: ${{ secrets.KOMPASS_DEPLOY_SECRET }}
+
+      - name: Patch Image Digest
+        run: |
+          echo -n ${{ needs.build.outputs.image_digest }} > dev/kompass-main/frontend-version
+
+      - name: Commit Changes to Repo
+        run: |
+          git config --global user.email "noreply@kartverket.no"
+          git config --global user.name "GitHub Actions"
+          git commit -am "Deploy Kompass-Frontend, commit: ${{ github.event.head_commit.message }}"
+          git push
