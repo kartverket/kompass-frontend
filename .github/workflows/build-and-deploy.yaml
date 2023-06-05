@@ -92,7 +92,8 @@ jobs:
 
       - name: Patch Image Digest
         run: |
-          echo -n ${{ needs.build.outputs.image_digest }} > dev/kompass-main/frontend-version
+          ls -R
+          echo -n ${{ needs.build.outputs.image_digest }} > ./dev/kompass-main/frontend-version
 
       - name: Commit Changes to Repo
         run: |
