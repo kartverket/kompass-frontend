@@ -3,22 +3,8 @@ name: Build and Deploy Application
 on:
   push:
     branches: [main]
-    # Publish semver tags as releases.
-    tags: ["v*.*.*"]
-    paths-ignore:
-      - doc/**
-      - samples/**
-      - README.md
-      - CONTRIBUTING.md
   pull_request:
     branches: [main]
-    # Publish semver tags as releases.
-    tags: ["v*.*.*"]
-    paths-ignore:
-      - doc/**
-      - samples/**
-      - README.md
-      - CONTRIBUTING.md
 
 env:
   REGISTRY: ghcr.io
@@ -95,7 +81,7 @@ jobs:
 
   deploy-argo:
     if: github.event_name == 'push' || github.ref == 'refs/heads/main'
-    needs: [build, generate]
+    needs: [nacho-skip]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout apps repo
