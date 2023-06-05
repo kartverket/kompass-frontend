@@ -81,7 +81,7 @@ jobs:
 
   deploy-argo:
     if: github.event_name == 'push' || github.ref == 'refs/heads/main'
-    needs: [nacho-skip]
+    needs: [build, nacho-skip]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout apps repo
