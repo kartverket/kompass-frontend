@@ -13,12 +13,40 @@ module.exports = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       animation: {
-        "scale-from-nothing": "scale-from-nothing 0.2s",
+        "rotate-x": "rotate-x 0.4s ease-out forwards",
+        "translate-from-left": "translate-from-left 0.6s ease-in-out",
+        "translate-from-right": "translate-from-right 0.6s ease-in-out",
       },
       keyframes: {
-        "scale-from-nothing": {
-          "0%": { transform: "scale(0)" },
-          "100%": { transform: "scale(1)" },
+        "rotate-x": {
+          "0%": {
+            transform: "rotateX(-90deg)",
+            opacity: 0,
+          },
+          "100%": {
+            opacity: 1,
+            transform: "rotateX(0deg)",
+          },
+        },
+        "translate-from-left": {
+          "0%": {
+            opacity: 0.1,
+            transform: "translateX(-50%)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateX(0)",
+          },
+        },
+        "translate-from-right": {
+          "0%": {
+            opacity: 0.1,
+            transform: "translateX(50%)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateX(0)",
+          },
         },
       },
     },

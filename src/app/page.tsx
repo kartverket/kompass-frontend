@@ -1,6 +1,6 @@
 "use client";
 import kompassLogo from "../../public/logo_kompass.svg";
-import { Heading } from "@kvib/react";
+import { Button, Center, Heading } from "@kvib/react";
 import LogoText from "@/components/LogoText";
 
 export default function Home() {
@@ -9,13 +9,15 @@ export default function Home() {
 
   return (
     <main className="p-6">
-      {/* <TextLink>Test Link</TextLink>
-      <Button>Test Button</Button>
-      <Heading>Velkommen til Kompass!</Heading> */}
-      <Heading className="px-4" variant="title1">
+      <Heading className="px-4 animate-translate-from-right" variant="title1">
         Velkommen til Kompass!
       </Heading>
-      <LogoText logoAlt="Logo Kompass" logoSrc={kompassLogo} text={vision} />
+      <div className="animate-translate-from-left">
+        <LogoText logoAlt="Logo Kompass" logoSrc={kompassLogo} text={vision} />
+      </div>
+      <Center className="py-6">
+        <Button className="animate-pulse">Kul KVIB-knapp</Button>
+      </Center>
     </main>
   );
 }

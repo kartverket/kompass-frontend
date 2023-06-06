@@ -28,7 +28,7 @@ function LogoText({ reverse = false, logoAlt, logoSrc, text }: LogoTextProps) {
   let contents = [logoBox, textBox];
   if (reverse) contents = contents.reverse();
   return (
-    <Flex className="px-6 flex-col justify-between items-center md:flex-row">
+    <Flex className="px-6 flex-col justify-between items-center md:flex-row lg:justify-evenly">
       {contents}
     </Flex>
   );

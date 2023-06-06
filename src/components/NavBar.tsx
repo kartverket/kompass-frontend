@@ -1,10 +1,10 @@
-import { Box, Button, Flex, Text } from "@kvib/react";
+import { Box, Heading } from "@kvib/react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function NavBar() {
   const styleNoFlex =
-    "hidden bg-green-50 -mx-6 mt-6 absolute shadow flex-col text-center z-10 animate-scale-from-nothing ";
+    "hidden bg-green-50 -mx-6 mt-6 absolute shadow flex-col text-center z-10 origin-top animate-rotate-x";
   const styleFlex = styleNoFlex + " group-hover:flex";
   const [dropDownStyle, setdropDownStyle] = useState(styleFlex);
 
@@ -16,13 +16,15 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="flex flex-row justify-around">
-      <Box className="p-6 cursor-pointer hover:bg-green-100">
-        <Link href={""}>Om Kompass</Link>
-      </Box>
+    <nav className="flex flex-row justify-center">
+      <Link href="">
+        <Box className="p-6 cursor-pointer hover:bg-green-100">
+          <Heading variant="title3">Om Kompass</Heading>
+        </Box>
+      </Link>
 
       <Box className="p-6 group cursor-pointer overflow-hidden hover:bg-green-100">
-        Teamene
+        <Heading variant="title3">Teamene</Heading>
         <Box className={dropDownStyle} onClick={switchDropDownStyle}>
           <Link className="p-3 hover:bg-green-100" href={"/dask"}>
             DASK
