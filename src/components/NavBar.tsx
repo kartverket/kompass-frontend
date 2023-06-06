@@ -10,7 +10,7 @@ export default function NavBar() {
 
       <Box className="p-6 group cursor-pointer overflow-hidden hover:bg-green-100">
         Teamene
-        <Box className="hidden bg-green-50 absolute shadow group-hover:flex flex-col text-center z-10 max-w-sm">
+        <Box className="hidden bg-green-50 absolute shadow flex-col text-center z-10 max-w-sm animate-scale-from-nothing group-hover:flex">
           <Link className="p-3 hover:bg-green-100" href={"/dask"}>
             DASK
           </Link>
